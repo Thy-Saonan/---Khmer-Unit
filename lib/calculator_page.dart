@@ -419,7 +419,7 @@ class LengthUnitPage extends StatelessWidget {
             ),
           ),
           DragAndDropGridView(
-            onWillAccept: (oldIndex, newIndex) => true,
+            onWillAccept: (oldIndex, newIndex) => false,
             onReorder: (oldIndex, newIndex) {
               String temp = unitName[oldIndex];
               unitName[oldIndex] = unitName[newIndex];
