@@ -1,4 +1,6 @@
 import 'package:drag_and_drop_gridview/devdrag.dart';
+import 'package:drag_and_drop_gridview/drag.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:calculator/input_box.dart';
 import 'package:calculator/units.dart';
@@ -18,16 +20,16 @@ List<String> unitName = unitOfEachTerm[term];
 var language = languageOfEachTerm[term];
 var unitOfEachTerm = {
   "length": ["JomArm", "Hat", "Pyeam", "Sen", "Keavut", "Yoch", "Tneab"],
-  "weight": ["Li", "Ji", "Domlerng", "Neal", "Jong", "Hab"],
+  "weight": ["Li", "Hun", "Ji", "Domlerng", "Neal", "Jong", "Hab"],
 };
 var languageOfEachTerm = {
   "length": {
     "en": ["JomArm", "Hat", "Pyeam", "Sen", "Keavut", "Yoch", "Tneab"],
-    "kh": ["ចំអាម", "ហត្ថ", "ព្យាម", "សិន", "គាវុត្ថ", "យោជន៍", "ធ្នាប"]
+    "kh": ["ចំអាម", "ហត្ថ", "ព្យាម", "សិន", "គាវុត", "យោជន៍", "ធ្នាប់"]
   },
   "weight": {
-    "kh": ["លី", "ជី", "ដំឡឹង", "នាល", "ចុង", "ហាប"],
-    "en": ["Li", "Ji", "Domlerng", "Neal", "Jong", "Hab"]
+    "kh": ["លី", "ហ៊ុន", "ជី", "ដំឡឹង", "នាឡិ", "ចុង", "ហាប"],
+    "en": ["Li", "Hun", "Ji", "Domlerng", "Neal", "Jong", "Hab"]
   },
 };
 var darkColors = {
@@ -158,6 +160,8 @@ class LengthUnitPage extends StatelessWidget {
       language = languageOfEachTerm[term];
       if (unitName[unitName.length - 1] == "Li") {
         kwu.inputLi(double.parse(inputValue));
+      } else if (unitName[unitName.length - 1] == "Hun") {
+        kwu.inputHun(double.parse(inputValue));
       } else if (unitName[unitName.length - 1] == "Ji") {
         kwu.inputJi(double.parse(inputValue));
       } else if (unitName[unitName.length - 1] == "Domlerng") {
@@ -189,6 +193,7 @@ class LengthUnitPage extends StatelessWidget {
     tapInputBox();
   }
 
+  bool absorb = false;
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -419,8 +424,13 @@ class LengthUnitPage extends StatelessWidget {
             ),
           ),
           DragAndDropGridView(
-            onWillAccept: (oldIndex, newIndex) => false,
+            onWillAccept: (oldIndex, newIndex) {
+              print(newIndex);
+              absorb = true;
+              return false;
+            },
             onReorder: (oldIndex, newIndex) {
+              absorb = false;
               String temp = unitName[oldIndex];
               unitName[oldIndex] = unitName[newIndex];
               unitName[newIndex] = temp;
@@ -443,6 +453,7 @@ class LengthUnitPage extends StatelessWidget {
                 return GridTile(
                   child: GestureDetector(
                     onTap: () => _showMyDialog(index),
+                    onLongPress: () {},
                     child: Box(
                       darkTheme,
                       child: UnitBox(
@@ -457,17 +468,7 @@ class LengthUnitPage extends StatelessWidget {
               },
             ),
             isCustomFeedback: true,
-            feedback: (pos) => Box(
-              darkTheme,
-              width: MediaQuery.of(context).size.width / 2,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(language[selectedLanguage][pos],
-                    style: TextStyle(
-                        color: Colors.grey[400],
-                        decoration: TextDecoration.none)),
-              ),
-            ),
+            feedback: (pos) => Container(),
             itemCount: unitName.length - 1,
           ),
         ],
